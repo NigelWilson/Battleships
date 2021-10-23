@@ -60,6 +60,18 @@ char gridCPU[9][9] = {
     '8', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
 };
 
+char gridCPUDisplay[9][9] = {
+    ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    '1', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '2', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '3', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '4', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '5', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '6', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '7', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    '8', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+};
+
 const std::map<char, int> alphaChars{ {'A', 1}, {'B', 2}, {'C', 3}, {'D', 4}, {'E', 5}, {'F', 6}, {'G', 7}, {'H', 8} };
 std::vector<Ship*> ships;
 std::vector<Ship*> playerShips;
@@ -93,14 +105,15 @@ int main()
     addShipsCPU(ships);
     addShipsPlayer(playerShips);
 
-    while (!gameOver) 
+    while (!gameOver)
     {
         draw();
         playerAttack();
         attack();
         Sleep(1000);
     }
-    
+
+    std::cout << winner << " wins!" << std::endl;
 }
 
 void draw()
@@ -114,7 +127,7 @@ void draw()
     drawCPUGrid();
 }
 
-void drawPlayerGrid() 
+void drawPlayerGrid()
 {
     for (int i = 0; i < sizeof(grid[0]); i++)
     {
@@ -128,11 +141,11 @@ void drawPlayerGrid()
 
 void drawCPUGrid()
 {
-    for (int i = 0; i < sizeof(gridCPU[0]); i++)
+    for (int i = 0; i < sizeof(gridCPUDisplay[0]); i++)
     {
-        for (int j = 0; j < sizeof(gridCPU[0]); j++)
+        for (int j = 0; j < sizeof(gridCPUDisplay[0]); j++)
         {
-            std::cout << gridCPU[i][j];
+            std::cout << gridCPUDisplay[i][j];
             if (j == 8) std::cout << std::endl;
         }
     }
@@ -395,6 +408,7 @@ void attack()
                 if (ship->getSpaces() == ship->getHits())
                 {
                     ship->setDestroyed(true);
+                    std::cout << "players " << ship->getType() << " was destroyed!" << std::endl;
                     gameOver = checkWinStatus("CPU");
                 }
             }
@@ -427,24 +441,11 @@ void playerAttack()
         std::string input;
         std::cin >> input;
 
-        // WE DON'T NEED ALL THIS AS WE ONLY HAVE ONE COORDINATE
-        std::vector<std::string> split;
-        std::stringstream test(input);
-        std::string segment;
-
-        while (std::getline(test, segment, ':'))
-        {
-            split.push_back(segment);
-        }
-
-        std::string front = split.front();
-        std::string back = split.back();
-
         try
         {
             // TODO Need to sanitize the inputs more, but assume correct format for now
-            c1a = alphaChars.at(front[0]);
-            c1b = char(front[1]) - '0'; // returns ascii value, interesting! Subtract char '0' to get the actual char value as int
+            c1b = alphaChars.at(input[0]);
+            c1a = char(input[1]) - '0'; // returns ascii value, interesting! Subtract char '0' to get the actual char value as int
         }
         catch (std::out_of_range)
         {
@@ -457,6 +458,7 @@ void playerAttack()
     {
         char spaceHit = gridCPU[c1a][c1b];
         gridCPU[c1a][c1b] = 'X';
+        gridCPUDisplay[c1a][c1b] = 'X';
 
         // WRONG NAME! REFACTOR TO CPUSHIPS
         for (Ship* ship : playerShips)
@@ -467,6 +469,7 @@ void playerAttack()
                 if (ship->getSpaces() == ship->getHits())
                 {
                     ship->setDestroyed(true);
+                    std::cout << "CPU " << ship->getType() << " was destroyed!" << std::endl;
                     gameOver = checkWinStatus("Player");
                 }
             }
@@ -475,6 +478,7 @@ void playerAttack()
     else
     {
         gridCPU[c1a][c1b] = 'O';
+        gridCPUDisplay[c1a][c1b] = 'O';
     }
 }
 
