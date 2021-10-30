@@ -14,8 +14,11 @@ public:
 
 	void createShips();
 	void buildGrid();
+	void buildDisplayGrid();
 	void modifyGrid(int row, int column, char value);
+	void modifyDisplayGrid(int row, int column, char value);
 	virtual void draw();
+	void drawDisplayGrid();
 
 	std::array<std::array<char, 9>, 9> & getGrid();
 	std::vector<Ship*> getShips();

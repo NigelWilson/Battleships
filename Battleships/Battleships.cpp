@@ -60,9 +60,8 @@ void playSinglePlayer()
     Human* human = new Human();
     CPU* cpu = new CPU();
     human->addShips();
-    human->draw();
     cpu->addShips();
-    cpu->draw();
+    draw(human, cpu);
 
     while (!gameOver)
     {
@@ -103,7 +102,7 @@ void draw(Player* playerOne, Player* playerTwo)
     system("cls");
     playerOne->draw();
     std::cout << std::endl;
-    playerTwo->draw();
+    playerTwo->drawDisplayGrid(); // Cheated a bit since we know this is the CPU for single player...
 }
 
 bool isAttackCoordinatesValid(std::vector<int> attackCoordinates, Player* player)
