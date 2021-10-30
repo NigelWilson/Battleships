@@ -9,9 +9,7 @@ Ship::Ship(std::string type, char sprite, int spaces)
 	this->setHits(0);
 }
 
-Ship::~Ship()
-{
-}
+Ship::~Ship(){}
 
 std::string Ship::getType()
 {
