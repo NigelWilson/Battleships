@@ -113,115 +113,59 @@ void playMultiplayer()
     std::string input;
     std::cin >> input;
 
-    if (std::stoi(input) == 1)
+    /*
+        Need to add a menu where the user can choose an IP and port number
+        Could do a connection test?
+        Could add an input where player enters their name and output it on text updates and win/lose conditions
+        Could improve when/how update messages are displayed
+         - Currently player only sees updates for their own ships being destroyed
+    */
+
+    Network* network = new Network();
+    player->addShips();
+    drawMultiplayer(player);
+
+    int turn = 1;
+
+    while (!gameOver)
     {
-        Network* p1Network = new Network();
-        //p1Network->send();
-
-        player->addShips();
-        drawMultiplayer(player);
-
-        int count = 1;
-
-        while (!gameOver)
+        if (std::stoi(input) == 1 && turn % 2 != 0 || std::stoi(input) == 2 && turn % 2 == 0)
         {
-            if (count % 2 != 0)
+            do
             {
-                do
-                {
-                    attackCoordinates = player->attack();
-                    
-                } while (!isAttackCoordinatesValid(attackCoordinates, player, true));
-                
-                p1Network->sendAttack(attackCoordinates, player);
-                char hitPos = player->applyImpact(attackCoordinates, true, true);
-                drawMultiplayer(player);
-                attackCoordinates.clear();
-                //winner = updateGameState(player, hitPos);
-            }
-            else
-            {
-                std::cout << "Waiting for enemy attack..." << std::endl;
-                char hitPos = p1Network->receiveAttack(player);
+                attackCoordinates = player->attack();
 
-                // If attack last turn won the game, other player will automatically attack with 'g'
-                if (hitPos == 'g')
-                {
-                    gameOver = true;
-                    delete p1Network;
-                    continue;
-                }
-
-                //char hitPos = player->applyImpact(attackCoordinates, true);
-                drawMultiplayer(player);
-                attackCoordinates.clear();
-                winner = updateGameState(player, hitPos);
-                
-                if (gameOver)
-                {
-                    p1Network->sendGameOver();
-                    delete p1Network;
-                }
-            }
-            count++;
+            } while (!isAttackCoordinatesValid(attackCoordinates, player, true));
+            network->sendAttack(attackCoordinates, player);
+            char hitPos = player->applyImpact(attackCoordinates, true, true);
+            drawMultiplayer(player);
+            attackCoordinates.clear();
         }
-    }
-    else if (std::stoi(input) == 2)
-    {
-        Network* p2Network = new Network();
-        //p2Network->receive();
-
-        player->addShips();
-        drawMultiplayer(player);
-
-        int count = 1;
-
-        while (!gameOver)
+        else
         {
-            if (count % 2 == 0)
+            std::cout << "Waiting for enemy attack..." << std::endl;
+            char hitPos = network->receiveAttack(player);
+
+            // If attack last turn won the game, other player will automatically attack with 'g'
+            if (hitPos == 'g')
             {
-                do
-                {
-                    attackCoordinates = player->attack();
-
-                } while (!isAttackCoordinatesValid(attackCoordinates, player, true));
-                p2Network->sendAttack(attackCoordinates, player);
-                char hitPos = player->applyImpact(attackCoordinates, true, true);
-                drawMultiplayer(player);
-                attackCoordinates.clear();
-                //winner = updateGameState(player, hitPos);
+                gameOver = true;
+                delete network;
+                continue;
             }
-            else
+
+            //char hitPos = player->applyImpact(attackCoordinates, true);
+            drawMultiplayer(player);
+            attackCoordinates.clear();
+            winner = updateGameState(player, hitPos);
+
+            if (gameOver)
             {
-                std::cout << "Waiting for enemy attack..." << std::endl;
-                char hitPos = p2Network->receiveAttack(player);
-
-                // If attack last turn won the game, other player will automatically attack with 'g'
-                if (hitPos == 'g')
-                {
-                    gameOver = true;
-                    delete p2Network;
-                    continue;
-                }
-
-                //player->applyImpact(attackCoordinates, true);
-                drawMultiplayer(player);
-                attackCoordinates.clear();
-                winner = updateGameState(player, hitPos);
-
-                if (gameOver)
-                {
-                    p2Network->sendGameOver();
-                    delete p2Network;
-                }
-
+                network->sendGameOver();
+                delete network;
             }
-            count++;
         }
-    }
-    else
-    {
-        return;
+        turn++;
     }
 
     std::cout << winner << " wins!" << std::endl;
@@ -275,9 +219,6 @@ bool isAttackCoordinatesValid(std::vector<int> attackCoordinates, Player* player
     return false;
 }
 
-// Turns out this method is tracking the game state for both players in a single set of ships for multiplayer
-// Need to ensure it's only one set.
-// Also need to ensure that the enemy player gets informed of a gameOver state
 std::string updateGameState(Player* player, char posHit)
 {
     std::string type = "";
