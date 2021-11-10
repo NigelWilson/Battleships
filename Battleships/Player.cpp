@@ -89,7 +89,12 @@ std::array<std::array<char, 9>, 9> & Player::getGrid()
 {
     //std::cout << "Player.cpp: " << &this->getGrid() << std::endl;
     return this->grid;
-    
+}
+
+std::array<std::array<char, 9>, 9>& Player::getDisplayGrid()
+{
+    //std::cout << "Player.cpp: " << &this->getGrid() << std::endl;
+    return this->displayGrid;
 }
 
 void Player::modifyGrid(int row, int column, char value)
@@ -113,20 +118,48 @@ std::vector<int> Player::attack()
     return std::vector<int>();
 }
 
-char Player::applyImpact(std::vector<int> attackCoordinates)
+char Player::applyImpact(std::vector<int> attackCoordinates, bool isMultiplayerGame, bool isAttacker)
 {
     char pos = this->getGrid()[attackCoordinates[0]][attackCoordinates[1]];
     // should we return this value and have the main class track what's been destroyed or just update it here?
 
-    if (pos == ' ')
+    if (isMultiplayerGame) 
     {
-        this->modifyGrid(attackCoordinates[0], attackCoordinates[1], 'O');
-        this->modifyDisplayGrid(attackCoordinates[0], attackCoordinates[1], 'O');
+        if (pos == ' ')
+        {
+            if (!isAttacker)
+            {
+                this->modifyGrid(attackCoordinates[0], attackCoordinates[1], 'O');
+            }
+            else
+            {
+                this->modifyDisplayGrid(attackCoordinates[0], attackCoordinates[1], 'O');
+            }
+        }
+        else
+        {
+            if (!isAttacker)
+            {
+                this->modifyGrid(attackCoordinates[0], attackCoordinates[1], 'X');
+            }
+            else
+            {
+                this->modifyDisplayGrid(attackCoordinates[0], attackCoordinates[1], 'X');
+            }
+        }
     }
     else
     {
-        this->modifyGrid(attackCoordinates[0], attackCoordinates[1], 'X');
-        this->modifyDisplayGrid(attackCoordinates[0], attackCoordinates[1], 'X');
+        if (pos == ' ')
+        {
+            this->modifyGrid(attackCoordinates[0], attackCoordinates[1], 'O');
+            this->modifyDisplayGrid(attackCoordinates[0], attackCoordinates[1], 'O');
+        }
+        else
+        {
+            this->modifyGrid(attackCoordinates[0], attackCoordinates[1], 'X');
+            this->modifyDisplayGrid(attackCoordinates[0], attackCoordinates[1], 'X');
+        }
     }
 
     return pos;
