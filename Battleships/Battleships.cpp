@@ -113,15 +113,20 @@ void playMultiplayer()
     std::string input;
     std::cin >> input;
 
+    system("cls");
+    std::cout << "Please enter the IP and port you will be connecting to..." << std::endl;
+
+    std::string ip;
+    std::cin >> ip;
+
     /*
-        Need to add a menu where the user can choose an IP and port number
         Could do a connection test?
         Could add an input where player enters their name and output it on text updates and win/lose conditions
         Could improve when/how update messages are displayed
          - Currently player only sees updates for their own ships being destroyed
     */
 
-    Network* network = new Network();
+    Network* network = new Network(ip);
     player->addShips();
     drawMultiplayer(player);
 

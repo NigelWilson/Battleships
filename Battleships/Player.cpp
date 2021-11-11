@@ -87,13 +87,11 @@ void Player::drawDisplayGrid()
 // Note the & to return a reference
 std::array<std::array<char, 9>, 9> & Player::getGrid()
 {
-    //std::cout << "Player.cpp: " << &this->getGrid() << std::endl;
     return this->grid;
 }
 
 std::array<std::array<char, 9>, 9>& Player::getDisplayGrid()
 {
-    //std::cout << "Player.cpp: " << &this->getGrid() << std::endl;
     return this->displayGrid;
 }
 

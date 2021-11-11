@@ -6,13 +6,26 @@
 using namespace boost::asio;
 using ip::tcp;
 
-Network::Network() : io_service() {}//, acceptor(io_service, tcp::endpoint(tcp::v4(), 8080)) {}//,socket(io_service){}
+Network::Network(std::string ip) : io_service() //, acceptor(io_service, tcp::endpoint(tcp::v4(), 8080)) {}//,socket(io_service){}
+{
+	std::vector<std::string> split;
+	std::stringstream test(ip);
+	std::string segment;
+
+	while (std::getline(test, segment, ':'))
+	{
+		split.push_back(segment);
+	}
+
+	this->ip = split.front();
+	this->port = std::stoi(split.back());
+}
 Network::~Network(){}
 
 char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 {
 	tcp::socket socket(io_service);
-	socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 8080));
+	socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(this->ip), this->port));
 
 	//const std::string msg = "Hello from Client!\n";
 	const std::string msg = std::to_string(attackCoordinates[0]) + ':' + std::to_string(attackCoordinates[1]) + "\n";
@@ -30,7 +43,6 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 
 	boost::asio::streambuf receive_buffer;
 	boost::asio::read_until(socket, receive_buffer, "\n", error);
-	//boost::asio::read(socket, receive_buffer, boost::asio::transfer_all(), error);
 	socket.close();
 
 	if (error && error != boost::asio::error::eof)
@@ -49,7 +61,7 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 char Network::receiveAttack(Human* player)
 {
 	tcp::socket socket(io_service);
-	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 8080));
+	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), this->port));
 	//waiting for the connection
 	acceptor.accept(socket);
 	//read operation
@@ -74,7 +86,6 @@ char Network::receiveAttack(Human* player)
 
 	//write operation
 	boost::system::error_code error;
-	//boost::asio::write(socket, boost::asio::buffer("Hi from Server!\n"), error);
 	boost::asio::write(socket, boost::asio::buffer(std::string(1, hitPos) + "\n"), error);
 	acceptor.close();
 	socket.close();
@@ -94,7 +105,7 @@ char Network::receiveAttack(Human* player)
 void Network::sendGameOver()
 {
 	tcp::socket socket(io_service);
-	socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 8080));
+	socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(this->ip), this->port));
 
 	const std::string msg = "gameover\n";
 	boost::system::error_code error;
