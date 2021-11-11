@@ -5,9 +5,7 @@
 #include "Network.h"
 #include <iostream>
 #include <string>
-#include <Windows.h>
 #include <vector>
-#include <typeinfo>
 #include <regex>
 
 void draw(Player* playerOne, Player* playerTwo);
@@ -31,29 +29,43 @@ int main()
 void intro()
 {
     gameOver = false;
-    std::cout << "Welcome to Battleships!" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Please choose a game type:" << std::endl;
-    std::cout << "1. Single Player" << std::endl;
-    std::cout << "2. Multiplayer" << std::endl;
-    std::cout << "3. Quit" << std::endl;
-
     std::string input;
-    std::cin >> input;
-
-    if (std::stoi(input) == 1)
+    int choice = 0;
+    
+    do
     {
         system("cls");
-        playSinglePlayer();
-    }
-    else if (std::stoi(input) == 2)
-    {
-        playMultiplayer();
-    }
-    else
-    {
-        return;
-    }
+
+        std::cout << "Welcome to Battleships!" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Please choose a game type:" << std::endl;
+        std::cout << "1. Single Player" << std::endl;
+        std::cout << "2. Multiplayer" << std::endl;
+        std::cout << "3. Quit" << std::endl;
+
+        std::cin >> input;
+
+        if (input.find_first_not_of("123") != std::string::npos)
+        {
+            continue;
+        }
+
+        choice = std::stoi(input);
+
+        if (std::stoi(input) == 1)
+        {
+            system("cls");
+            playSinglePlayer();
+        }
+        else if (std::stoi(input) == 2)
+        {
+            playMultiplayer();
+        }
+        else
+        {
+            return;
+        }
+    } while (choice != 1 && choice != 2 && choice != 3);
 }
 
 void playSinglePlayer()
