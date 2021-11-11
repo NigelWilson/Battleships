@@ -48,8 +48,6 @@ void Human::addShips()
             std::string front = split.front();
             std::string back = split.back();
 
-            
-            // TODO Need to sanitize the inputs more, but assume correct format for now
             c1a = alphaChars.at(front[0]);
             c1b = char(front[1]) - '0'; // returns ascii value, interesting! Subtract char '0' to get the actual char value as int
             c2a = alphaChars.at(back[0]);
@@ -134,7 +132,6 @@ std::vector<int> Human::attack()
 
     try
     {
-        // TODO Need to sanitize the inputs more, but assume correct format for now
         attackCoordinates.push_back(char(input[1]) - '0');
         attackCoordinates.push_back(alphaChars.at(input[0]));
     }

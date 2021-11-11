@@ -99,10 +99,6 @@ void playSinglePlayer()
 
 void playMultiplayer()
 {
-    //https://www.boost.org/doc/libs/1_44_0/doc/html/boost_asio/examples.html
-    //https://www.programmingnotes.org/4640/c-snippet-how-to-send-text-over-a-network-using-a-tcp-connection/
-    //https://www.c-sharpcorner.com/article/socket-programming-in-cpp-using-boost-asio-tcp-server-and-client/ looks best!
-
     Human* player = new Human();
 
     system("cls");
@@ -118,13 +114,6 @@ void playMultiplayer()
 
     std::string ip;
     std::cin >> ip;
-
-    /*
-        Could do a connection test?
-        Could add an input where player enters their name and output it on text updates and win/lose conditions
-        Could improve when/how update messages are displayed
-         - Currently player only sees updates for their own ships being destroyed
-    */
 
     Network* network = new Network(ip);
     player->addShips();
@@ -159,7 +148,6 @@ void playMultiplayer()
                 continue;
             }
 
-            //char hitPos = player->applyImpact(attackCoordinates, true);
             drawMultiplayer(player);
             attackCoordinates.clear();
             winner = updateGameState(player, hitPos);

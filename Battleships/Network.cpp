@@ -27,7 +27,6 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 	tcp::socket socket(io_service);
 	socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(this->ip), this->port));
 
-	//const std::string msg = "Hello from Client!\n";
 	const std::string msg = std::to_string(attackCoordinates[0]) + ':' + std::to_string(attackCoordinates[1]) + "\n";
 	boost::system::error_code error;
 	boost::asio::write(socket, boost::asio::buffer(msg), error);
