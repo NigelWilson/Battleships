@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include <vector>
 #include <typeinfo>
+#include <regex>
 
 void draw(Player* playerOne, Player* playerTwo);
 void drawMultiplayer(Player* player);
@@ -109,11 +110,14 @@ void playMultiplayer()
     std::string input;
     std::cin >> input;
 
-    system("cls");
-    std::cout << "Please enter the IP and port you will be connecting to..." << std::endl;
-
     std::string ip;
-    std::cin >> ip;
+    const std::regex ipRegex("[1-255][1-255][1-255][1-255]:[1000-65535]");
+    do
+    {
+        system("cls");
+        std::cout << "Please enter the IP and port you will be connecting to..." << std::endl;
+        std::cin >> ip;
+    } while (!std::regex_match(ip, ipRegex));
 
     Network* network = new Network(ip);
     player->addShips();

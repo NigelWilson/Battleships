@@ -15,7 +15,7 @@ void Human::draw()
 
 void Human::addShips()
 {
-    const std::regex inputRegex("[A-Ha-h][1-8]:[A-Ha-h][1-8]");
+    const std::regex inputRegex("[A-H][1-8]:[A-H][1-8]");
 
     for (Ship* ship : this->getShips())
     {
@@ -119,7 +119,7 @@ std::vector<int> Human::attack()
 {
     int row = 0, col = 0;
     std::vector<int> attackCoordinates;
-    const std::regex attackRegex("[A-Ha-h][1-8]");
+    const std::regex attackRegex("[A-H][1-8]");
 
     std::cout << "Input coordinates to attack: " << std::endl;
     std::string input;
