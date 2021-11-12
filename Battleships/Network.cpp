@@ -16,7 +16,30 @@ Network::~Network(){}
 char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 {
 	tcp::socket socket(io_service);
-	socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(this->ip), this->port));
+	bool connected = false;
+	int attempts = 1;
+
+	do
+	{
+		try
+		{
+			socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(this->ip), this->port));
+			connected = true;
+		}
+		catch (const boost::system::system_error& e)
+		{
+			std::cout << "Error connecting to other player, retrying: attempt " << attempts << std::endl;
+			attempts++;
+
+			if (attempts == 10)
+			{
+				std::cout << "Error connecting to other player: " << e.what() << std::endl;
+				std::cout << "Returning to main menu..." << std::endl;
+				return 'f';
+			}
+			Sleep(1000);
+		}
+	} while (!connected && attempts < 10);
 
 	const std::string msg = std::to_string(attackCoordinates[0]) + ':' + std::to_string(attackCoordinates[1]) + "\n";
 	boost::system::error_code error;

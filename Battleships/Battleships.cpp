@@ -162,7 +162,13 @@ void playMultiplayer()
                 attackCoordinates = player->attack();
 
             } while (!isAttackCoordinatesValid(attackCoordinates, player, true));
-            network->sendAttack(attackCoordinates, player);
+            char response = network->sendAttack(attackCoordinates, player);
+
+            if (response == 'f')
+            {
+                break;
+            }
+
             char hitPos = player->applyImpact(attackCoordinates, true, true);
             drawMultiplayer(player);
             attackCoordinates.clear();
@@ -193,7 +199,11 @@ void playMultiplayer()
         turn++;
     }
 
-    std::cout << winner << " wins!" << std::endl;
+    if (!winner.empty())
+    {
+        std::cout << winner << " wins!" << std::endl;
+    }
+
     delete player;
 
     Sleep(5000);
