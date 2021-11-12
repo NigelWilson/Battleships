@@ -58,16 +58,37 @@ void Human::addShips()
         // One of the axis must have the same value, check which one and then fill in the blanks on the other
         if (c1b == c2b)
         {
-            for (int i = c1a; i <= c2a; i++)
+            // Need this condition in case people try to put the coordinates in reverse order
+            if (c1a < c2a)
             {
-                this->modifyGrid(c1b, i, ship->getSprite());
+                for (int i = c1a; i <= c2a; i++)
+                {
+                    this->modifyGrid(c1b, i, ship->getSprite());
+                }
+            }
+            else
+            {
+                for (int i = c2a; i <= c1a; i++)
+                {
+                    this->modifyGrid(c1b, i, ship->getSprite());
+                }
             }
         }
         else
         {
-            for (int i = c1b; i <= c2b; i++)
+            if (c1b < c2b)
             {
-                this->modifyGrid(i, c2a, ship->getSprite());
+                for (int i = c1b; i <= c2b; i++)
+                {
+                    this->modifyGrid(i, c2a, ship->getSprite());
+                }
+            }
+            else
+            {
+                for (int i = c2b; i <= c1b; i++)
+                {
+                    this->modifyGrid(i, c2a, ship->getSprite());
+                }
             }
         }
         system("cls");
@@ -76,38 +97,75 @@ void Human::addShips()
 
 bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
 {
-    if (c1a < 1 || c2a > 8 || c2a < 1 || c2b > 8)
+    if (c1a < 1 || c1a > 8 || c1b < 1 || c1b > 8 || c2a < 1 || c2a > 8 || c2b < 1 || c2b > 8)
     {
         return false;
     }
 
     if (c1b == c2b)
     {
-        if ((c2a - c1a) + 1 > ship->getSpaces())
+        // Are coordinates reversed or not?
+        if (c1a < c2a)
         {
-            return false;
-        }
-
-        for (int i = c1a; i <= c2a; i++)
-        {
-            if (this->getGrid()[c1b][i] != ' ')
+            if ((c2a - c1a) + 1 > ship->getSpaces())
             {
                 return false;
+            }
+
+            for (int i = c1a; i <= c2a; i++)
+            {
+                if (this->getGrid()[c1b][i] != ' ')
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            if ((c1a - c2a) + 1 > ship->getSpaces())
+            {
+                return false;
+            }
+
+            for (int i = c2a; i <= c1a; i++)
+            {
+                if (this->getGrid()[c1b][i] != ' ')
+                {
+                    return false;
+                }
             }
         }
     }
     else
     {
-        if ((c2b - c1b) + 1 > ship->getSpaces())
+        if (c1b < c2b)
         {
-            return false;
-        }
-
-        for (int i = c1b; i <= c2b; i++)
-        {
-            if (this->getGrid()[i][c2a] != ' ')
+            if ((c2b - c1b) + 1 > ship->getSpaces())
             {
                 return false;
+            }
+
+            for (int i = c1b; i <= c2b; i++)
+            {
+                if (this->getGrid()[i][c2a] != ' ')
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            if ((c1b - c2b) + 1 > ship->getSpaces())
+            {
+                return false;
+            }
+
+            for (int i = c2b; i <= c1b; i++)
+            {
+                if (this->getGrid()[i][c2a] != ' ')
+                {
+                    return false;
+                }
             }
         }
     }

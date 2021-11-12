@@ -1,4 +1,3 @@
-// Battleships.cpp : This file contains the 'main' function. Program execution begins and ends there.
 #include "Ship.h"
 #include "Human.h"
 #include "CPU.h"
@@ -147,6 +146,7 @@ void playMultiplayer()
         }
     } while (port < 1000 || port > 65535);
 
+    system("cls");
     Network* network = new Network(ip, port);
     player->addShips();
     drawMultiplayer(player);
@@ -183,6 +183,7 @@ void playMultiplayer()
             {
                 gameOver = true;
                 delete network;
+                winner = "You";
                 continue;
             }
 
@@ -194,6 +195,7 @@ void playMultiplayer()
             {
                 network->sendGameOver();
                 delete network;
+                winner = "Enemy";
             }
         }
         turn++;
@@ -201,7 +203,7 @@ void playMultiplayer()
 
     if (!winner.empty())
     {
-        std::cout << winner << " wins!" << std::endl;
+        std::cout << winner << " won!" << std::endl;
     }
 
     delete player;
@@ -225,7 +227,6 @@ void drawMultiplayer(Player* player)
     std::cout << "Enemy Grid" << std::endl;
     player->drawDisplayGrid();
     std::cout << std::endl;
-    std::cout << "Your Grid" << std::endl;
     player->draw();
 }
 

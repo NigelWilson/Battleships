@@ -84,7 +84,6 @@ void Player::drawDisplayGrid()
     }
 }
 
-// Note the & to return a reference
 std::array<std::array<char, 9>, 9> & Player::getGrid()
 {
     return this->grid;
@@ -119,7 +118,6 @@ std::vector<int> Player::attack()
 char Player::applyImpact(std::vector<int> attackCoordinates, bool isMultiplayerGame, bool isAttacker)
 {
     char pos = this->getGrid()[attackCoordinates[0]][attackCoordinates[1]];
-    // should we return this value and have the main class track what's been destroyed or just update it here?
 
     if (isMultiplayerGame) 
     {

@@ -70,7 +70,6 @@ bool CPU::validShipCoordinates(int coordinate, int direction, int spaces)
     return true;
 }
 
-// Needs more work - may have to forego the intelligence side initially to get it up and going
 std::vector<int> CPU::attack()
 {
     std::vector<int> attackCoordinates;
