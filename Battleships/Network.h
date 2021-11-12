@@ -4,7 +4,7 @@
 class Network
 {
 public:
-	Network(std::string ip);
+	Network(std::string ip, int port);
 	~Network();
 	char sendAttack(std::vector<int> & attackCoordinates, Human* player);
 	char receiveAttack(Human* player);

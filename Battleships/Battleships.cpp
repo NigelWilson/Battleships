@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <regex>
+#include <boost/asio.hpp>
 
 void draw(Player* playerOne, Player* playerTwo);
 void drawMultiplayer(Player* player);
@@ -123,15 +123,31 @@ void playMultiplayer()
     std::cin >> input;
 
     std::string ip;
-    const std::regex ipRegex("[1-255][1-255][1-255][1-255]:[1000-65535]");
+    std::string inputPort;
+    int port = 0;
+    boost::asio::ip::address address;
+    boost::system::error_code ec;
+    
     do
     {
         system("cls");
-        std::cout << "Please enter the IP and port you will be connecting to..." << std::endl;
+        std::cout << "Please enter the IP you will be connecting to" << std::endl;
         std::cin >> ip;
-    } while (!std::regex_match(ip, ipRegex));
+        address = boost::asio::ip::address::from_string(ip, ec);
+    } while (ec || !address.is_v4());
 
-    Network* network = new Network(ip);
+    do
+    {
+        system("cls");
+        std::cout << "Please enter the port number you will be using/connecting to (between 1000 and 65535)" << std::endl;
+        std::cin >> inputPort;
+        if (!inputPort.empty() && inputPort.find_first_not_of("0123456789") == std::string::npos)
+        {
+            port = std::stoi(inputPort);
+        }
+    } while (port < 1000 || port > 65535);
+
+    Network* network = new Network(ip, port);
     player->addShips();
     drawMultiplayer(player);
 

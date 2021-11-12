@@ -6,19 +6,10 @@
 using namespace boost::asio;
 using ip::tcp;
 
-Network::Network(std::string ip) : io_service() //, acceptor(io_service, tcp::endpoint(tcp::v4(), 8080)) {}//,socket(io_service){}
+Network::Network(std::string ip, int port) : io_service() //, acceptor(io_service, tcp::endpoint(tcp::v4(), 8080)) {}//,socket(io_service){}
 {
-	std::vector<std::string> split;
-	std::stringstream test(ip);
-	std::string segment;
-
-	while (std::getline(test, segment, ':'))
-	{
-		split.push_back(segment);
-	}
-
-	this->ip = split.front();
-	this->port = std::stoi(split.back());
+	this->ip = ip;
+	this->port = port;
 }
 Network::~Network(){}
 
