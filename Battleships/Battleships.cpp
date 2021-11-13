@@ -83,7 +83,7 @@ void playSinglePlayer()
             attackCoordinates = human->attack();
         } while (!isAttackCoordinatesValid(attackCoordinates, cpu, false));
 
-        char hitPos = cpu->applyImpact(attackCoordinates, false, false);
+        char hitPos = cpu->applyImpact(attackCoordinates, false, false, NULL);
         draw(human, cpu);
         attackCoordinates.clear();
         winner = updateGameState(cpu, hitPos);
@@ -93,7 +93,7 @@ void playSinglePlayer()
             attackCoordinates = cpu->attack();
         } while (!isAttackCoordinatesValid(attackCoordinates, human, false));
 
-        hitPos = human->applyImpact(attackCoordinates, false, false);
+        hitPos = human->applyImpact(attackCoordinates, false, false, NULL);
         draw(human, cpu);
         winner = updateGameState(human, hitPos);
 
@@ -169,7 +169,7 @@ void playMultiplayer()
                 break;
             }
 
-            char hitPos = player->applyImpact(attackCoordinates, true, true);
+            char hitPos = player->applyImpact(attackCoordinates, true, true, response);
             drawMultiplayer(player);
             attackCoordinates.clear();
         }

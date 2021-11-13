@@ -115,9 +115,12 @@ std::vector<int> Player::attack()
     return std::vector<int>();
 }
 
-char Player::applyImpact(std::vector<int> attackCoordinates, bool isMultiplayerGame, bool isAttacker)
+char Player::applyImpact(std::vector<int> attackCoordinates, bool isMultiplayerGame, bool isAttacker, char pos)
 {
-    char pos = this->getGrid()[attackCoordinates[0]][attackCoordinates[1]];
+    if (!pos)
+    {
+        pos = this->getGrid()[attackCoordinates[0]][attackCoordinates[1]];
+    }
 
     if (isMultiplayerGame) 
     {

@@ -23,7 +23,7 @@ public:
 	std::array<std::array<char, 9>, 9> & getGrid();
 	std::array<std::array<char, 9>, 9>& getDisplayGrid();
 	std::vector<Ship*> getShips();
-	char applyImpact(std::vector<int> attackCoordinates, bool isMultiplayerGame, bool isAttacker);
+	char applyImpact(std::vector<int> attackCoordinates, bool isMultiplayerGame, bool isAttacker, char pos);
 
 	virtual std::vector<int> attack();
 };

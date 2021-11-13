@@ -45,11 +45,7 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 	boost::system::error_code error;
 	boost::asio::write(socket, boost::asio::buffer(msg), error);
 
-	if (!error)
-	{
-		std::cout << "Successfully sent message from client to server!" << std::endl;
-	}
-	else
+	if (error)
 	{
 		std::cout << "Failed: " << error.message() << std::endl;
 	}
@@ -95,7 +91,7 @@ char Network::receiveAttack(Human* player)
 		received.push_back(std::stoi(s));
 	}
 
-	char hitPos = player->applyImpact(received, true, false);
+	char hitPos = player->applyImpact(received, true, false, NULL);
 
 	//write operation
 	boost::system::error_code error;
@@ -106,10 +102,6 @@ char Network::receiveAttack(Human* player)
 	if (error && error != boost::asio::error::eof)
 	{
 		std::cout << "receive failed: " << error.message() << std::endl;
-	}
-	else
-	{
-		std::cout << "Apparently successfully sent reply to the client" << std::endl;
 	}
 
 	return hitPos;
@@ -124,11 +116,7 @@ void Network::sendGameOver()
 	boost::system::error_code error;
 	boost::asio::write(socket, boost::asio::buffer(msg), error);
 
-	if (!error)
-	{
-		std::cout << "Successfully sent message from client to server!" << std::endl;
-	}
-	else
+	if (error)
 	{
 		std::cout << "Failed: " << error.message() << std::endl;
 	}
