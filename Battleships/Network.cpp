@@ -6,6 +6,8 @@
 using namespace boost::asio;
 using ip::tcp;
 
+// Not sure why the commented constructor arguments didn't work effectively
+// The socket in particular would be able to receive data but the sent response would never be received by the client.
 Network::Network(std::string ip, int port) : io_service() //, acceptor(io_service, tcp::endpoint(tcp::v4(), 8080)) {}//,socket(io_service){}
 {
 	this->ip = ip;
@@ -70,9 +72,27 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 char Network::receiveAttack(Human* player)
 {
 	tcp::socket socket(io_service);
-	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), this->port));
+	std::unique_ptr<tcp::acceptor> acceptor;
+
+	// Should limit requests to the address of the first connected client
+	if (this->ip.empty())
+	{
+		acceptor = std::make_unique<tcp::acceptor>(io_service, tcp::endpoint(tcp::v4(), this->port));
+	}
+	else
+	{
+		acceptor = std::make_unique<tcp::acceptor>(io_service, tcp::endpoint(ip::address::from_string(this->ip), this->port));
+	}
+
 	//waiting for the connection
-	acceptor.accept(socket);
+	acceptor->accept(socket);
+
+	if (this->ip.empty())
+	{
+		this->ip = socket.remote_endpoint().address().to_string();
+	}
+
+	std::cout << socket.remote_endpoint().address().to_string() << std::endl;
 	//read operation
 	boost::asio::streambuf buf;
 	boost::asio::read_until(socket, buf, "\n");
@@ -96,7 +116,8 @@ char Network::receiveAttack(Human* player)
 	//write operation
 	boost::system::error_code error;
 	boost::asio::write(socket, boost::asio::buffer(std::string(1, hitPos) + "\n"), error);
-	acceptor.close();
+	//acceptor.close();
+	acceptor->close();
 	socket.close();
 
 	if (error && error != boost::asio::error::eof)

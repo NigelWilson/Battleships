@@ -121,19 +121,22 @@ void playMultiplayer()
     std::string input;
     std::cin >> input;
 
-    std::string ip;
+    std::string ip = "";
     std::string inputPort;
     int port = 0;
     boost::asio::ip::address address;
     boost::system::error_code ec;
     
-    do
+    if (std::stoi(input) == 1)
     {
-        system("cls");
-        std::cout << "Please enter the IP you will be connecting to" << std::endl;
-        std::cin >> ip;
-        address = boost::asio::ip::address::from_string(ip, ec);
-    } while (ec || !address.is_v4());
+        do
+        {
+            system("cls");
+            std::cout << "Please enter the IP you will be connecting to" << std::endl;
+            std::cin >> ip;
+            address = boost::asio::ip::address::from_string(ip, ec);
+        } while (ec || !address.is_v4());
+    }
 
     do
     {

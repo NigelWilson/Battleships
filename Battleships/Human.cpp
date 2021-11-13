@@ -24,6 +24,7 @@ void Human::addShips()
 
         do
         {
+            // Keep asking player for inputs until they are valid
             std::cout << "Please enter coordianates for your " << ship->getType() << " separated by a colon e.g.A1:A5" << std::endl;
             std::cout << "You need " << ship->getSpaces() << " spaces to place your " << ship->getType() << std::endl;
             std::string input;
