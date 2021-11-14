@@ -269,7 +269,7 @@ std::string updateGameState(Player* player, char posHit)
 {
     std::string type = "";
 
-    // If type is Human, then it was CPU that attacked
+    // In single player if player is Human, then it was CPU that attacked
     if (dynamic_cast<Human*>(player))
     {
         type = "CPU";
