@@ -16,6 +16,7 @@ bool checkWinStatus(Player* player);
 void intro();
 void playSinglePlayer();
 void playMultiplayer();
+void displayRules();
 
 bool gameOver = false;
 std::string winner = "";
@@ -42,11 +43,12 @@ void intro()
         std::cout << "Please choose a game type:" << std::endl;
         std::cout << "1. Single Player" << std::endl;
         std::cout << "2. Multiplayer" << std::endl;
-        std::cout << "3. Quit" << std::endl;
+        std::cout << "3. How to Play" << std::endl;
+        std::cout << "4. Quit" << std::endl;
 
         std::cin >> input;
 
-        if (input.find_first_not_of("123") != std::string::npos)
+        if (input.find_first_not_of("1234") != std::string::npos)
         {
             continue;
         }
@@ -61,6 +63,10 @@ void intro()
         else if (std::stoi(input) == 2)
         {
             playMultiplayer();
+        }
+        else if (std::stoi(input) == 3)
+        {
+            displayRules();
         }
         else
         {
@@ -241,6 +247,61 @@ void playMultiplayer()
     system("pause");
     system("cls");
     logText.clear();
+    intro();
+}
+
+void displayRules()
+{
+    system("cls");
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How to Play Battleships" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Battleships is a game where each player as an 8x8 square grid on which five ships must be placed." << std::endl;
+    std::cout << "Once all the ships have been placed by you and your opponent, each player will take turns to select a coordinate of the enemies grid to attack." << std::endl;
+    std::cout << "If the attack hits an enemy ship, that space will display as an X, if not a O will fill that space. If you land a hit, try attacking nearby ";
+    std::cout << "spaces to completely destroy an enemy ship." << std::endl;
+    std::cout << "The game is over once all ships from one player have been destroyed." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "**************************************" << std::endl;
+    std::cout << "Ships" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Carrier: Uses 5 grid spaces - represented by C" << std::endl;
+    std::cout << "Battleship: Uses 4 grid spaces - represented by B" << std::endl;
+    std::cout << "Destroyer: Uses 3 grid spaces - represented by D" << std::endl;
+    std::cout << "Submarine: Uses 3 grid spaces - represented by S" << std::endl;
+    std::cout << "Patrol Boat: Uses 2 grid spaces - represented by P" << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How do I place ships on my grid?" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "To place ships you must enter the starting and ending coordinate you wish to use for each ship, separated by a colon character." << std::endl;
+    std::cout << "For example, placing a Carrier which must take up 5 spaces you could enter 'A1:A5' or 'A1:E1'." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How do I attack the enemy?" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Simply enter the coordinates by column and row you wish to attack. For example you could enter 'A1' to attack that space." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "I hope you enjoy playing Battleships!" << std::endl;
+    std::cout << std::endl;
+
+    system("pause");
     intro();
 }
 
