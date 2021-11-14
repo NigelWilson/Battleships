@@ -1,13 +1,13 @@
 #pragma once
 #include "Player.h"
-#include <queue>
+#include <deque>
 class CPU :
     public Player
 {
 private:
     bool hit = false;
     int direction = 0;
-    std::queue<std::string> hits;
+    std::deque<std::string> hits;
 public:
     CPU();
     ~CPU();

@@ -94,6 +94,12 @@ void playSinglePlayer()
         } while (!isAttackCoordinatesValid(attackCoordinates, human, false));
 
         hitPos = human->applyImpact(attackCoordinates, false, false, NULL);
+
+        if (hitPos != ' ')
+        {
+            cpu->addHit(attackCoordinates[0], attackCoordinates[1]);
+        }
+
         draw(human, cpu);
         winner = updateGameState(human, hitPos);
 
@@ -219,9 +225,10 @@ void playMultiplayer()
 void draw(Player* playerOne, Player* playerTwo)
 {
     system("cls");
-    playerOne->draw();
-    std::cout << std::endl;
+    std::cout << "CPU Grid" << std::endl;
     playerTwo->drawDisplayGrid(); // Cheated a bit since we know this is the CPU for single player...
+    std::cout << std::endl;
+    playerOne->draw();
 }
 
 void drawMultiplayer(Player* player)
@@ -262,13 +269,14 @@ std::string updateGameState(Player* player, char posHit)
 {
     std::string type = "";
 
+    // If type is Human, then it was CPU that attacked
     if (dynamic_cast<Human*>(player))
     {
-        type = "Human";
+        type = "CPU";
     }
     else if (dynamic_cast<CPU*>(player))
     {
-        type = "CPU";
+        type = "Human";
     }
 
     for (Ship* ship : player->getShips())
@@ -279,7 +287,7 @@ std::string updateGameState(Player* player, char posHit)
             if (ship->getSpaces() == ship->getHits())
             {
                 ship->setDestroyed(true);
-                std::cout << type << "'s " << ship->getType() << " was destroyed!" << std::endl;
+                //std::cout << type << "'s " << ship->getType() << " was destroyed!" << std::endl;
                 gameOver = checkWinStatus(player);
             }
         }

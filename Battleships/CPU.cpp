@@ -74,7 +74,7 @@ std::vector<int> CPU::attack()
 {
     std::vector<int> attackCoordinates;
 
-    if (hits.size() > 0)
+    for (int i = 0; i < hits.size(); i++)
     {
         std::vector<std::string> split;
         std::stringstream test(hits.back());
@@ -88,47 +88,48 @@ std::vector<int> CPU::attack()
         int front = std::stoi(split.front());
         int back = std::stoi(split.back());
 
-        if (front + 1 == 8)
-            direction++;
-        else if (front - 1 == 0)
-            direction++;
-        else if (back + 1 == 8)
-            direction++;
-        else if (back - 1 == 0)
-            direction = 0;
-
-        // Doesn't work overly well but OK for now
         switch (direction)
         {
         case 0:
-            if (std::stoi(split.front()) == 8) break; // Does this allow fall through to case 1?
-            attackCoordinates.push_back(std::stoi(split.front()) + 1);
-            attackCoordinates.push_back(std::stoi(split.back()));
-            direction++;
-            break;
+            if (std::stoi(split.front()) != 8)
+            {
+                attackCoordinates.push_back(std::stoi(split.front()) + 1);
+                attackCoordinates.push_back(std::stoi(split.back()));
+                direction++;
+                break;
+            }
         case 1:
-            if (std::stoi(split.front()) == 1) break;
-            attackCoordinates.push_back(std::stoi(split.front()) - 1);
-            attackCoordinates.push_back(std::stoi(split.back()));
-            direction++;
-            break;
+            if (std::stoi(split.front()) != 1)
+            {
+                attackCoordinates.push_back(std::stoi(split.front()) - 1);
+                attackCoordinates.push_back(std::stoi(split.back()));
+                direction++;
+                break;
+            }
         case 2:
-            if (std::stoi(split.back()) == 8) break;
-            attackCoordinates.push_back(std::stoi(split.front()));
-            attackCoordinates.push_back(std::stoi(split.back()) + 1);
-            direction++;
-            break;
+            if (std::stoi(split.back()) != 8)
+            {
+                attackCoordinates.push_back(std::stoi(split.front()));
+                attackCoordinates.push_back(std::stoi(split.back()) + 1);
+                direction++;
+                break;
+            }
         case 3:
             if (std::stoi(split.back()) == 1)
             {
-                hits.pop();
+                hits.pop_back();
                 direction = 0;
                 break;
             }
             attackCoordinates.push_back(std::stoi(split.front()));
             attackCoordinates.push_back(std::stoi(split.back()) - 1);
-            hits.pop();
+            hits.pop_back();
             direction = 0;
+            break;
+        }
+
+        if (attackCoordinates.size())
+        {
             break;
         }
     }
@@ -145,10 +146,10 @@ std::vector<int> CPU::attack()
 void CPU::addHit(int row, int col)
 {
     direction = 0;
-    hits.push(std::to_string(row) + ":" + std::to_string(col));
+    hits.push_back(std::to_string(row) + ":" + std::to_string(col));
     if (hits.size() > 3)
     {
-        hits.pop();
+        hits.pop_front();
     }
 }
 
