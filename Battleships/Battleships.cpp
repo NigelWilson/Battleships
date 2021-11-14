@@ -19,6 +19,7 @@ void playMultiplayer();
 bool gameOver = false;
 std::string winner = "";
 std::vector<int> attackCoordinates;
+std::vector<std::string> logText;
 
 int main()
 {
@@ -84,9 +85,9 @@ void playSinglePlayer()
         } while (!isAttackCoordinatesValid(attackCoordinates, cpu, false));
 
         char hitPos = cpu->applyImpact(attackCoordinates, false, false, NULL);
-        draw(human, cpu);
         attackCoordinates.clear();
         winner = updateGameState(cpu, hitPos);
+        draw(human, cpu);
 
         do
         {
@@ -100,8 +101,8 @@ void playSinglePlayer()
             cpu->addHit(attackCoordinates[0], attackCoordinates[1]);
         }
 
-        draw(human, cpu);
         winner = updateGameState(human, hitPos);
+        draw(human, cpu);
 
         Sleep(1000);
     }
@@ -119,6 +120,7 @@ void playSinglePlayer()
 void playMultiplayer()
 {
     Human* player = new Human();
+    std::map<char, int> hitTracker{ {'C', 0}, {'B', 0}, {'D', 0}, {'S', 0}, {'P', 0} };
 
     system("cls");
     std::cout << "Are you client or server?" << std::endl;
@@ -179,6 +181,20 @@ void playMultiplayer()
                 break;
             }
 
+            std::map<char, int>::iterator it = hitTracker.find(response);
+            if (it != hitTracker.end())
+            {
+                it->second++;
+
+                for (Ship* ship : player->getShips())
+                {
+                    if (ship->getSprite() == response && ship->getSpaces() == it->second)
+                    {
+                        logText.push_back("Enemy " + ship->getType() + " destroyed!");
+                    }
+                }
+            }
+
             char hitPos = player->applyImpact(attackCoordinates, true, true, response);
             drawMultiplayer(player);
             attackCoordinates.clear();
@@ -197,9 +213,9 @@ void playMultiplayer()
                 continue;
             }
 
+            winner = updateGameState(player, hitPos);
             drawMultiplayer(player);
             attackCoordinates.clear();
-            winner = updateGameState(player, hitPos);
 
             if (gameOver)
             {
@@ -230,6 +246,13 @@ void draw(Player* playerOne, Player* playerTwo)
     playerTwo->drawDisplayGrid(); // Cheated a bit since we know this is the CPU for single player...
     std::cout << std::endl;
     playerOne->draw();
+    std::cout << std::endl;
+
+    for (std::string s : logText)
+    {
+        std::cout << s << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 void drawMultiplayer(Player* player)
@@ -239,6 +262,13 @@ void drawMultiplayer(Player* player)
     player->drawDisplayGrid();
     std::cout << std::endl;
     player->draw();
+    std::cout << std::endl;
+
+    for (std::string s : logText)
+    {
+        std::cout << s << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 bool isAttackCoordinatesValid(std::vector<int> attackCoordinates, Player* player, bool isMultiplayerGame)
@@ -270,14 +300,13 @@ std::string updateGameState(Player* player, char posHit)
 {
     std::string type = "";
 
-    // In single player if player is Human, then it was CPU that attacked
     if (dynamic_cast<Human*>(player))
     {
-        type = "CPU";
+        type = "Player";
     }
     else if (dynamic_cast<CPU*>(player))
     {
-        type = "Human";
+        type = "CPU";
     }
 
     for (Ship* ship : player->getShips())
@@ -288,12 +317,12 @@ std::string updateGameState(Player* player, char posHit)
             if (ship->getSpaces() == ship->getHits())
             {
                 ship->setDestroyed(true);
-                //std::cout << type << "'s " << ship->getType() << " was destroyed!" << std::endl;
+                logText.push_back(type + "'s " + ship->getType() + " destroyed!");
                 gameOver = checkWinStatus(player);
             }
         }
     }
-    return type;
+    return type == "Player" ? "CPU" : "Player";
 }
 
 bool checkWinStatus(Player* player)
