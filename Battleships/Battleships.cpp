@@ -9,6 +9,7 @@
 
 void draw(Player* playerOne, Player* playerTwo);
 void drawMultiplayer(Player* player);
+void drawLogText();
 bool isAttackCoordinatesValid(std::vector<int> attackCoordinates, Player* player, bool isMultiplayer);
 std::string updateGameState(Player* player, char hitPos);
 bool checkWinStatus(Player* player);
@@ -89,6 +90,8 @@ void playSinglePlayer()
         winner = updateGameState(cpu, hitPos);
         draw(human, cpu);
 
+        if (gameOver) break;
+
         do
         {
             attackCoordinates = cpu->attack();
@@ -114,6 +117,7 @@ void playSinglePlayer()
     // Not great practice to use these as they run OS level apps on the path
     system("pause");
     system("cls");
+    logText.clear();
     intro();
 }
 
@@ -236,6 +240,7 @@ void playMultiplayer()
 
     system("pause");
     system("cls");
+    logText.clear();
     intro();
 }
 
@@ -247,12 +252,7 @@ void draw(Player* playerOne, Player* playerTwo)
     std::cout << std::endl;
     playerOne->draw();
     std::cout << std::endl;
-
-    for (std::string s : logText)
-    {
-        std::cout << s << std::endl;
-    }
-    std::cout << std::endl;
+    drawLogText();
 }
 
 void drawMultiplayer(Player* player)
@@ -263,7 +263,11 @@ void drawMultiplayer(Player* player)
     std::cout << std::endl;
     player->draw();
     std::cout << std::endl;
+    drawLogText();
+}
 
+void drawLogText()
+{
     for (std::string s : logText)
     {
         std::cout << s << std::endl;
