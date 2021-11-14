@@ -10,6 +10,7 @@ CPU::CPU(){}
 
 CPU::~CPU(){}
 
+// deprecated but left for debug
 void CPU::draw()
 {
     std::cout << "CPU grid" << std::endl;
@@ -84,9 +85,6 @@ std::vector<int> CPU::attack()
         {
             split.push_back(segment);
         }
-
-        int front = std::stoi(split.front());
-        int back = std::stoi(split.back());
 
         switch (direction)
         {
