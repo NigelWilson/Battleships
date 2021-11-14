@@ -66,7 +66,7 @@ void Player::draw()
     {
         for (int j = 0; j < sizeof(this->grid[0]); j++)
         {
-            std::cout << this->grid[i][j];
+            std::cout << '|' << this->grid[i][j];
             if (j == 8) std::cout << std::endl;
         }
     }
@@ -78,7 +78,7 @@ void Player::drawDisplayGrid()
     {
         for (int j = 0; j < sizeof(this->displayGrid[0]); j++)
         {
-            std::cout << this->displayGrid[i][j];
+            std::cout << '|' << this->displayGrid[i][j];
             if (j == 8) std::cout << std::endl;
         }
     }
