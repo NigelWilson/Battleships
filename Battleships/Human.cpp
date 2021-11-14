@@ -108,7 +108,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
         // Are coordinates reversed or not?
         if (c1a < c2a)
         {
-            if ((c2a - c1a) + 1 > ship->getSpaces())
+            if ((c2a - c1a) + 1 != ship->getSpaces())
             {
                 return false;
             }
@@ -123,7 +123,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
         }
         else
         {
-            if ((c1a - c2a) + 1 > ship->getSpaces())
+            if ((c1a - c2a) + 1 != ship->getSpaces())
             {
                 return false;
             }
@@ -141,7 +141,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
     {
         if (c1b < c2b)
         {
-            if ((c2b - c1b) + 1 > ship->getSpaces())
+            if ((c2b - c1b) + 1 != ship->getSpaces())
             {
                 return false;
             }
@@ -156,7 +156,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
         }
         else
         {
-            if ((c1b - c2b) + 1 > ship->getSpaces())
+            if ((c1b - c2b) + 1 != ship->getSpaces())
             {
                 return false;
             }
