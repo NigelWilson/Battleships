@@ -110,7 +110,8 @@ void playSinglePlayer()
     delete human;
     delete cpu;
 
-    Sleep(5000);
+    // Not great practice to use these as they run OS level apps on the path
+    system("pause");
     system("cls");
     intro();
 }
@@ -217,7 +218,7 @@ void playMultiplayer()
 
     delete player;
 
-    Sleep(5000);
+    system("pause");
     system("cls");
     intro();
 }
