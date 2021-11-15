@@ -105,7 +105,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
 
     if (c1b == c2b)
     {
-        // Are coordinates reversed or not?
+        // Are coordinates reversed or not? E.G A5:A1 as oposed to A1:A5
         if (c1a < c2a)
         {
             if ((c2a - c1a) + 1 != ship->getSpaces())

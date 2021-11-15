@@ -17,6 +17,9 @@ void intro();
 void playSinglePlayer();
 void playMultiplayer();
 void displayRules();
+std::string getClientOrServer();
+std::string getIP();
+int getPort();
 
 bool gameOver = false;
 std::string winner = "";
@@ -28,6 +31,7 @@ int main()
     intro();
 }
 
+// Displays a main menu and allows user to select game type
 void intro()
 {
     gameOver = false;
@@ -75,6 +79,7 @@ void intro()
     } while (choice != 1 && choice != 2 && choice != 3);
 }
 
+// Sets up player objects for human and CPU and executes single player game logic
 void playSinglePlayer()
 {
     Human* human = new Human();
@@ -96,6 +101,8 @@ void playSinglePlayer()
         winner = updateGameState(cpu, hitPos);
         draw(human, cpu);
 
+        // Impossible for human to win without this since updateGameState()
+        // below for CPU's turn will override gameOver state
         if (gameOver) break;
 
         do
@@ -127,47 +134,19 @@ void playSinglePlayer()
     intro();
 }
 
+// Sets up required objects for network multiplayer game and executes game logic
 void playMultiplayer()
 {
     Human* player = new Human();
+    // Allows us to track hits we have applied to the enemy player
     std::map<char, int> hitTracker{ {'C', 0}, {'B', 0}, {'D', 0}, {'S', 0}, {'P', 0} };
-
-    system("cls");
-    std::cout << "Are you client or server?" << std::endl;
-    std::cout << "1. Client" << std::endl;
-    std::cout << "2. Server" << std::endl;
-
-    std::string input;
-    std::cin >> input;
-
-    std::string ip = "";
-    std::string inputPort;
-    int port = 0;
-    boost::asio::ip::address address;
-    boost::system::error_code ec;
+    std::string input = getClientOrServer();
     
-    if (std::stoi(input) == 1)
-    {
-        do
-        {
-            system("cls");
-            std::cout << "Please enter the IP you will be connecting to" << std::endl;
-            std::cin >> ip;
-            address = boost::asio::ip::address::from_string(ip, ec);
-        } while (ec || !address.is_v4());
-    }
+    std::string ip = "";
+    if (std::stoi(input) == 1) ip = getIP();
 
-    do
-    {
-        system("cls");
-        std::cout << "Please enter the port number you will be using/connecting to (between 1000 and 65535)" << std::endl;
-        std::cin >> inputPort;
-        if (!inputPort.empty() && inputPort.find_first_not_of("0123456789") == std::string::npos)
-        {
-            port = std::stoi(inputPort);
-        }
-    } while (port < 1000 || port > 65535);
-
+    int port = getPort();
+    
     system("cls");
     Network* network = new Network(ip, port);
     player->addShips();
@@ -186,10 +165,7 @@ void playMultiplayer()
             } while (!isAttackCoordinatesValid(attackCoordinates, player, true));
             char response = network->sendAttack(attackCoordinates, player);
 
-            if (response == 'f')
-            {
-                break;
-            }
+            if (response == 'f') break;
 
             std::map<char, int>::iterator it = hitTracker.find(response);
             if (it != hitTracker.end())
@@ -250,61 +226,6 @@ void playMultiplayer()
     intro();
 }
 
-void displayRules()
-{
-    system("cls");
-    std::cout << "**************************************" << std::endl;
-    std::cout << "How to Play Battleships" << std::endl;
-    std::cout << "**************************************" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Battleships is a game where each player as an 8x8 square grid on which five ships must be placed." << std::endl;
-    std::cout << "Once all the ships have been placed by you and your opponent, each player will take turns to select a coordinate of the enemies grid to attack." << std::endl;
-    std::cout << "If the attack hits an enemy ship, that space will display as an X, if not a O will fill that space. If you land a hit, try attacking nearby ";
-    std::cout << "spaces to completely destroy an enemy ship." << std::endl;
-    std::cout << "The game is over once all ships from one player have been destroyed." << std::endl;
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "**************************************" << std::endl;
-    std::cout << "Ships" << std::endl;
-    std::cout << "**************************************" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Carrier: Uses 5 grid spaces - represented by C" << std::endl;
-    std::cout << "Battleship: Uses 4 grid spaces - represented by B" << std::endl;
-    std::cout << "Destroyer: Uses 3 grid spaces - represented by D" << std::endl;
-    std::cout << "Submarine: Uses 3 grid spaces - represented by S" << std::endl;
-    std::cout << "Patrol Boat: Uses 2 grid spaces - represented by P" << std::endl;
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "**************************************" << std::endl;
-    std::cout << "How do I place ships on my grid?" << std::endl;
-    std::cout << "**************************************" << std::endl;
-    std::cout << std::endl;
-    std::cout << "To place ships you must enter the starting and ending coordinate you wish to use for each ship, separated by a colon character." << std::endl;
-    std::cout << "For example, placing a Carrier which must take up 5 spaces you could enter 'A1:A5' or 'A1:E1'." << std::endl;
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "**************************************" << std::endl;
-    std::cout << "How do I attack the enemy?" << std::endl;
-    std::cout << "**************************************" << std::endl;
-    std::cout << std::endl;
-    std::cout << "Simply enter the coordinates by column and row you wish to attack. For example you could enter 'A1' to attack that space." << std::endl;
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "I hope you enjoy playing Battleships!" << std::endl;
-    std::cout << std::endl;
-
-    system("pause");
-    intro();
-}
-
 void draw(Player* playerOne, Player* playerTwo)
 {
     system("cls");
@@ -327,6 +248,7 @@ void drawMultiplayer(Player* player)
     drawLogText();
 }
 
+// Display log of destroyed ships
 void drawLogText()
 {
     for (std::string s : logText)
@@ -387,6 +309,7 @@ std::string updateGameState(Player* player, char posHit)
             }
         }
     }
+    // If type == Player it was CPU that attacked this turn, so winner would be CPU on gameOver
     return type == "Player" ? "CPU" : "Player";
 }
 
@@ -400,4 +323,112 @@ bool checkWinStatus(Player* player)
         }
     }
     return true;
+}
+
+/*
+    Helper methods to get user input for network multiplayer games
+*/
+std::string getClientOrServer()
+{
+    std::string input;
+    do
+    {
+        system("cls");
+        std::cout << "Are you client or server?" << std::endl;
+        std::cout << "1. Client" << std::endl;
+        std::cout << "2. Server" << std::endl;
+        std::cin >> input;
+    } while (input.find_first_not_of("12") != std::string::npos);
+
+    return input;
+}
+
+std::string getIP()
+{
+    boost::asio::ip::address address;
+    boost::system::error_code ec;
+    std::string ip = "";
+
+    do
+    {
+        system("cls");
+        std::cout << "Please enter the IP you will be connecting to" << std::endl;
+        std::cin >> ip;
+        address = boost::asio::ip::address::from_string(ip, ec);
+    } while (ec || !address.is_v4());
+
+    return ip;
+}
+
+int getPort()
+{
+    std::string inputPort;
+    int port = 0;
+    do
+    {
+        system("cls");
+        std::cout << "Please enter the port number you will be using/connecting to (between 1000 and 65535)" << std::endl;
+        std::cin >> inputPort;
+        if (!inputPort.empty() && inputPort.find_first_not_of("0123456789") == std::string::npos)
+        {
+            port = std::stoi(inputPort);
+        }
+    } while (port < 1000 || port > 65535);
+
+    return port;
+}
+
+void displayRules()
+{
+    system("cls");
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How to Play Battleships" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Battleships is a game where each player as an 8x8 square grid on which five ships must be placed." << std::endl;
+    std::cout << "Once all the ships have been placed by you and your opponent, each player will take turns to select a coordinate of the enemies grid to attack." << std::endl;
+    std::cout << "If the attack hits an enemy ship, that space will display as an X, if not a O will fill that space. If you land a hit, try attacking nearby ";
+    std::cout << "spaces to completely destroy an enemy ship." << std::endl;
+    std::cout << "The game is over once all ships from one player have been destroyed." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "**************************************" << std::endl;
+    std::cout << "Ships" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Carrier: Uses 5 grid spaces - represented by C" << std::endl;
+    std::cout << "Battleship: Uses 4 grid spaces - represented by B" << std::endl;
+    std::cout << "Destroyer: Uses 3 grid spaces - represented by D" << std::endl;
+    std::cout << "Submarine: Uses 3 grid spaces - represented by S" << std::endl;
+    std::cout << "Patrol Boat: Uses 2 grid spaces - represented by P" << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How do I place ships on my grid?" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "To place ships you must enter the starting and ending coordinate you wish to use for each ship, separated by a colon character." << std::endl;
+    std::cout << "For example, placing a Carrier which must take up 5 spaces you could enter 'A1:A5' or 'A1:E1'." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How do I attack the enemy?" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Simply enter the coordinates by column and row you wish to attack. For example you could enter 'A1' to attack that space." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "I hope you enjoy playing Battleships!" << std::endl;
+    std::cout << std::endl;
+
+    system("pause");
+    intro();
 }
