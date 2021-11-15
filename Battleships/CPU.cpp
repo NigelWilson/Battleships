@@ -71,6 +71,7 @@ bool CPU::validShipCoordinates(int coordinate, int direction, int spaces)
     return true;
 }
 
+// Based on hits we remember from previous turns, attack surrounding spaces
 std::vector<int> CPU::attack()
 {
     std::vector<int> attackCoordinates;
@@ -141,6 +142,7 @@ std::vector<int> CPU::attack()
     return attackCoordinates;
 }
 
+// Remember the last 3 hits, could change CPU difficulty by remembering more or less hits
 void CPU::addHit(int row, int col)
 {
     direction = 0;
