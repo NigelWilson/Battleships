@@ -24,7 +24,13 @@ void Human::addShips()
 
         do
         {
+            c1a = 0, c1b = 0; c2a = 0, c2b = 0;
             // Keep asking player for inputs until they are valid
+            if (!inputError.empty()) {
+                std::cout << inputError << std::endl;
+                inputError = "";
+            }
+
             std::cout << "Please enter coordianates for your " << ship->getType() << " separated by a colon e.g.A1:A5" << std::endl;
             std::cout << "You need " << ship->getSpaces() << " spaces to place your " << ship->getType() << std::endl;
             std::string input;
@@ -34,6 +40,7 @@ void Human::addShips()
 
             if (!std::regex_match(input, inputRegex))
             {
+                inputError = "One or more coordinates exceeds grid boundary!";
                 continue;
             }
 
@@ -100,6 +107,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
 {
     if (c1a < 1 || c1a > 8 || c1b < 1 || c1b > 8 || c2a < 1 || c2a > 8 || c2b < 1 || c2b > 8)
     {
+        inputError = "One or more coordinates exceeds grid boundary!";
         return false;
     }
 
@@ -110,6 +118,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
         {
             if ((c2a - c1a) + 1 != ship->getSpaces())
             {
+                inputError = "Coordinates do not match required ship size!";
                 return false;
             }
 
@@ -117,6 +126,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
             {
                 if (this->getGrid()[c1b][i] != ' ')
                 {
+                    inputError = "One or more coordinates you tried to use is blocked!";
                     return false;
                 }
             }
@@ -125,6 +135,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
         {
             if ((c1a - c2a) + 1 != ship->getSpaces())
             {
+                inputError = "Coordinates do not match required ship size!";
                 return false;
             }
 
@@ -132,17 +143,19 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
             {
                 if (this->getGrid()[c1b][i] != ' ')
                 {
+                    inputError = "One or more coordinates you tried to use is blocked!";
                     return false;
                 }
             }
         }
     }
-    else
+    else if (c1a == c2a)
     {
         if (c1b < c2b)
         {
             if ((c2b - c1b) + 1 != ship->getSpaces())
             {
+                inputError = "Coordinates do not match required ship size!";
                 return false;
             }
 
@@ -150,6 +163,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
             {
                 if (this->getGrid()[i][c2a] != ' ')
                 {
+                    inputError = "One or more coordinates you tried to use is blocked!";
                     return false;
                 }
             }
@@ -158,6 +172,7 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
         {
             if ((c1b - c2b) + 1 != ship->getSpaces())
             {
+                inputError = "Coordinates do not match required ship size!";
                 return false;
             }
 
@@ -165,10 +180,17 @@ bool Human::validShipCoordinates(int c1a, int c1b, int c2a, int c2b, Ship* ship)
             {
                 if (this->getGrid()[i][c2a] != ' ')
                 {
+                    inputError = "One or more coordinates you tried to use is blocked!";
                     return false;
                 }
             }
         }
+    }
+    else 
+    {
+        // Diagonals not allowed
+        inputError = "Diagonals not allowed!";
+        return false;
     }
 
     return true;

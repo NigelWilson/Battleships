@@ -7,6 +7,7 @@ class Human :
 private:
     // initialising here will force recompile for any classes importing this header if the values change
     const std::map<char, int> alphaChars = { {'A', 1}, {'B', 2}, {'C', 3}, {'D', 4}, {'E', 5}, {'F', 6}, {'G', 7}, {'H', 8} };
+    std::string inputError = "";
 public:
     Human();
     ~Human();
