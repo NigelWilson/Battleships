@@ -38,10 +38,10 @@ void Human::addShips()
             }
 
             std::vector<std::string> split;
-            std::stringstream test(input);
+            std::stringstream stream(input);
             std::string segment;
 
-            while (std::getline(test, segment, ':'))
+            while (std::getline(stream, segment, ':'))
             {
                 split.push_back(segment);
             }

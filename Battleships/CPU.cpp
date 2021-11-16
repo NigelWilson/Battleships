@@ -79,10 +79,10 @@ std::vector<int> CPU::attack()
     for (int i = 0; i < hits.size(); i++)
     {
         std::vector<std::string> split;
-        std::stringstream test(hits.back());
+        std::stringstream stream(hits.back());
         std::string segment;
 
-        while (std::getline(test, segment, ':'))
+        while (std::getline(stream, segment, ':'))
         {
             split.push_back(segment);
         }
