@@ -82,12 +82,12 @@ char Network::receiveAttack(Human* player)
 		this->ip = socket.remote_endpoint().address().to_string();
 	}
 
-	std::cout << socket.remote_endpoint().address().to_string() << std::endl;
+	//std::cout << socket.remote_endpoint().address().to_string() << std::endl;
 	//read operation
 	boost::asio::streambuf buf;
 	boost::asio::read_until(socket, buf, "\n");
 	std::string data = boost::asio::buffer_cast<const char*>(buf.data());
-	std::cout << data << std::endl;
+	//std::cout << data << std::endl;
 
 	if (data == "gameover\n") {
 		return 'g';
