@@ -72,20 +72,16 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 
 char Network::receiveAttack(Human* player)
 {
-	tcp::socket socket(io_service);
-	//std::unique_ptr<tcp::socket> socket;// (new tcp::socket(io_service));
+	tcp::socket* sock;
 	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), this->port));
 	const std::regex attackRegex("[1-8]:[1-8]\\n");
 	std::string data;
 
-	// Handles bogus connections in a functional but ugly way
-	// How can we declare a socket variable without initialising it?
-	// Using a pointer or unique_ptr<> doesn't work as they can't be passed into acceptor.accept()
+	// Handles bogus connections
 	do
 	{
-		// Must be a way to reuse this with unique_ptr but I can't pass that into the acceptor.accept() method
-		//socket.reset(new tcp::socket(io_service));
 		tcp::socket socket(io_service);
+		sock = &socket;
 
 		if (!data.empty())
 		{
@@ -106,8 +102,8 @@ char Network::receiveAttack(Human* player)
 		{
 			this->ip = socket.remote_endpoint().address().to_string();
 		}
-
 		//std::cout << socket.remote_endpoint().address().to_string() << std::endl;
+
 		//read operation
 		boost::asio::streambuf buf;
 		boost::asio::read_until(socket, buf, "\n");
@@ -131,9 +127,9 @@ char Network::receiveAttack(Human* player)
 
 	//write operation
 	boost::system::error_code error;
-	boost::asio::write(socket, boost::asio::buffer(std::string(1, hitPos) + "\n"), error);
+	boost::asio::write(*sock, boost::asio::buffer(std::string(1, hitPos) + "\n"), error);
 	acceptor.close();
-	socket.close();
+	sock->close();
 
 	if (error && error != boost::asio::error::eof)
 	{
