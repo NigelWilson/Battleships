@@ -1,6 +1,7 @@
 #include "Network.h"
 #include <iostream>
 #include <sstream>
+#include <regex>
 #include <boost/asio.hpp>
 
 using namespace boost::asio;
@@ -72,22 +73,47 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 char Network::receiveAttack(Human* player)
 {
 	tcp::socket socket(io_service);
+	//std::unique_ptr<tcp::socket> socket;// (new tcp::socket(io_service));
 	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), this->port));
+	const std::regex attackRegex("[1-8]:[1-8]\\n");
+	std::string data;
 
-	//waiting for the connection
-	acceptor.accept(socket);
-
-	if (this->ip.empty())
+	// Handles bogus connections in a functional but ugly way
+	// How can we declare a socket variable without initialising it?
+	// Using a pointer or unique_ptr<> doesn't work as they can't be passed into acceptor.accept()
+	do
 	{
-		this->ip = socket.remote_endpoint().address().to_string();
-	}
+		// Must be a way to reuse this with unique_ptr but I can't pass that into the acceptor.accept() method
+		//socket.reset(new tcp::socket(io_service));
+		tcp::socket socket(io_service);
 
-	//std::cout << socket.remote_endpoint().address().to_string() << std::endl;
-	//read operation
-	boost::asio::streambuf buf;
-	boost::asio::read_until(socket, buf, "\n");
-	std::string data = boost::asio::buffer_cast<const char*>(buf.data());
-	//std::cout << data << std::endl;
+		if (!data.empty())
+		{
+			this->ip = "";
+			data = "";
+		}
+
+		try
+		{
+			acceptor.accept(socket);
+		}
+		catch (const boost::system::system_error& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+		
+		if (this->ip.empty())
+		{
+			this->ip = socket.remote_endpoint().address().to_string();
+		}
+
+		//std::cout << socket.remote_endpoint().address().to_string() << std::endl;
+		//read operation
+		boost::asio::streambuf buf;
+		boost::asio::read_until(socket, buf, "\n");
+		data = boost::asio::buffer_cast<const char*>(buf.data());
+		//std::cout << data << std::endl;
+	} while (!std::regex_match(data, attackRegex));
 
 	if (data == "gameover\n") {
 		return 'g';
