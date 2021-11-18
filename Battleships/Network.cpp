@@ -72,22 +72,19 @@ char Network::sendAttack(std::vector<int> & attackCoordinates, Human* player)
 
 char Network::receiveAttack(Human* player)
 {
-	tcp::socket* sock;
 	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), this->port));
 	const std::regex attackRegex("[1-8]:[1-8]\\n");
 	std::string data;
 
-	// Handles bogus connections
 	do
 	{
-		tcp::socket socket(io_service);
-		sock = &socket;
-
 		if (!data.empty())
 		{
 			this->ip = "";
 			data = "";
 		}
+
+		tcp::socket socket(io_service);
 
 		try
 		{
@@ -109,34 +106,36 @@ char Network::receiveAttack(Human* player)
 		boost::asio::read_until(socket, buf, "\n");
 		data = boost::asio::buffer_cast<const char*>(buf.data());
 		//std::cout << data << std::endl;
-	} while (!std::regex_match(data, attackRegex));
 
-	if (data == "gameover\n") {
-		return 'g';
-	}
+		if (data == "gameover\n") return 'g';
 
-	std::stringstream stream(data);
-	std::string s;
-	std::vector<int> received;
-	while (std::getline(stream, s, ':')) 
-	{
-		received.push_back(std::stoi(s));
-	}
+		// Handles bogus connections
+		if (!std::regex_match(data, attackRegex)) continue;
 
-	char hitPos = player->applyImpact(received, true, false, NULL);
+		std::stringstream stream(data);
+		std::string s;
+		std::vector<int> received;
+		while (std::getline(stream, s, ':'))
+		{
+			received.push_back(std::stoi(s));
+		}
 
-	//write operation
-	boost::system::error_code error;
-	boost::asio::write(*sock, boost::asio::buffer(std::string(1, hitPos) + "\n"), error);
-	acceptor.close();
-	sock->close();
+		char hitPos = player->applyImpact(received, true, false, NULL);
 
-	if (error && error != boost::asio::error::eof)
-	{
-		std::cout << "receive failed: " << error.message() << std::endl;
-	}
+		//write operation
+		boost::system::error_code error;
+		std::cout << socket.is_open() << std::endl;
+		boost::asio::write(socket, boost::asio::buffer(std::string(1, hitPos) + "\n"), error);
+		acceptor.close();
+		socket.close();
 
-	return hitPos;
+		if (error && error != boost::asio::error::eof)
+		{
+			std::cout << "receive failed: " << error.message() << std::endl;
+		}
+
+		return hitPos;
+	} while (true);
 }
 
 void Network::sendGameOver()
