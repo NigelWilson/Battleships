@@ -5,8 +5,6 @@ class Network
 {
 private:
 	boost::asio::io_service io_service;
-	//boost::asio::ip::tcp::acceptor acceptor;
-	//boost::asio::ip::tcp::socket socket;
 	std::string ip;
 	int port;
 public:

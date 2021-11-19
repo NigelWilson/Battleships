@@ -7,9 +7,7 @@
 using namespace boost::asio;
 using ip::tcp;
 
-// Not sure why the commented constructor arguments didn't work effectively
-// The socket in particular would be able to receive data but the sent response would never be received by the client.
-Network::Network(std::string ip, int port) : io_service() //, acceptor(io_service, tcp::endpoint(tcp::v4(), 8080)) {}//,socket(io_service){}
+Network::Network(std::string ip, int port) : io_service()
 {
 	this->ip = ip;
 	this->port = port;
