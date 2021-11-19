@@ -435,6 +435,8 @@ void displayRules()
     std::cout << "if playing online it will need the external IP address of the opposing players network. They can find this by googling 'what is my ip'. ";
     std::cout << "Additionally if playing online, both players will need to set up port forwarding on their respective routers to ensure network traffic reaches the device playing the game. ";
     std::cout << "This port number must then be entered by both players when requested by the game on starting a multiplayer match." << std::endl;
+    std::cout << "You may also need to allow the game to communicate over public networks. This should manifest as a pop up on starting a multiplayer game, or can be set in Windows Firewall ";
+    std::cout << "settings." << std::endl;
 
     std::cout << std::endl;
     std::cout << std::endl;
