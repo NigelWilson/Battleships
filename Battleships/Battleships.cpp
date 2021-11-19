@@ -230,7 +230,8 @@ void draw(Player* playerOne, Player* playerTwo)
 {
     system("cls");
     std::cout << "CPU Grid" << std::endl;
-    playerTwo->drawDisplayGrid(); // Cheated a bit since we know this is the CPU for single player...
+    // We know this player is the CPU so don't draw its actual grid with ship placement
+    playerTwo->drawDisplayGrid();
     std::cout << std::endl;
     playerOne->draw();
     std::cout << std::endl;
