@@ -426,6 +426,19 @@ void displayRules()
     std::cout << std::endl;
     std::cout << std::endl;
 
+    std::cout << "**************************************" << std::endl;
+    std::cout << "How does Multiplayer work?" << std::endl;
+    std::cout << "**************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Firstly select whether you are hosting the game or connecting to an existing host. The host should choose to be the server, the other player should select client." << std::endl;
+    std::cout << "If your are the client, you must enter the IP address of the opposing player. If playing on LAN this will be the local IP address of their device, ";
+    std::cout << "if playing online it will need the external IP address of the opposing players network. They can find this by googling 'what is my ip'. ";
+    std::cout << "Additionally if playing online, both players will need to set up port forwarding on their respective routers to ensure network traffic reaches the device playing the game. ";
+    std::cout << "This port number must then be entered by both players when requested by the game on starting a multiplayer match." << std::endl;
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
     std::cout << "I hope you enjoy playing Battleships!" << std::endl;
     std::cout << std::endl;
 
